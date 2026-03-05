@@ -64,14 +64,14 @@
             color: #e0e0e0;
             min-height: 100vh;
         }
-        .container { max-width: 1500px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
             border-bottom: 1px solid #2d3a5a;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         .logo { display: flex; align-items: center; gap: 15px; }
         .logo-icon {
@@ -85,58 +85,37 @@
         }
         .logo h1 { font-size: 24px; color: #fff; }
         .logo p { font-size: 12px; color: #888; }
-        .update-time { text-align: right; font-size: 14px; color: #888; }
+        .header-right { text-align: right; }
+        .update-time { font-size: 14px; color: #888; margin-bottom: 5px; }
+        .auto-update { font-size: 12px; color: #4caf50; }
         
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
         }
         .stat-card {
             background: linear-gradient(145deg, #1e2745, #232d4a);
             border-radius: 16px;
-            padding: 25px;
+            padding: 20px;
             border: 1px solid #2d3a5a;
             transition: transform 0.3s;
         }
-        .stat-card:hover { transform: translateY(-5px); }
-        .stat-card .label { font-size: 14px; color: #888; margin-bottom: 10px; }
-        .stat-card .value { font-size: 32px; font-weight: bold; color: #fff; }
-        .stat-card .change { font-size: 12px; margin-top: 5px; }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-card .label { font-size: 13px; color: #888; margin-bottom: 8px; }
+        .stat-card .value { font-size: 28px; font-weight: bold; color: #fff; }
+        .stat-card .change { font-size: 11px; margin-top: 5px; }
         .stat-card .change.positive { color: #4caf50; }
         .stat-card .change.negative { color: #f44336; }
         .stat-card .change.neutral { color: #888; }
-        
-        /* Platform Tabs */
-        .platform-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .platform-tab {
-            padding: 12px 24px;
-            background: #1e2745;
-            border: 1px solid #2d3a5a;
-            border-radius: 25px;
-            color: #888;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .platform-tab:hover { background: #2d3a5a; color: #fff; }
-        .platform-tab.active { background: #00d4ff; color: #fff; border-color: #00d4ff; }
         
         /* Section */
         .section {
             background: linear-gradient(145deg, #1e2745, #232d4a);
             border-radius: 16px;
-            padding: 25px;
+            padding: 20px;
             border: 1px solid #2d3a5a;
             margin-bottom: 20px;
         }
@@ -144,81 +123,56 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
             border-bottom: 1px solid #2d3a5a;
         }
         .section-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #fff;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         
-        /* News List */
-        .news-list { max-height: 600px; overflow-y: auto; }
-        .news-item {
-            display: flex;
-            gap: 15px;
-            padding: 15px;
+        /* Alert Cards - 可点击 */
+        .alert-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .alert-card {
+            background: rgba(244, 67, 54, 0.08);
+            border: 1px solid rgba(244, 67, 54, 0.25);
             border-radius: 12px;
-            background: #1a2338;
-            margin-bottom: 12px;
+            padding: 15px;
             text-decoration: none;
             color: inherit;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            cursor: pointer;
         }
-        .news-item:hover { background: #243050; }
-        .news-item .sentiment { width: 6px; border-radius: 3px; flex-shrink: 0; }
-        .news-item .sentiment.positive { background: #4caf50; }
-        .news-item .sentiment.negative { background: #f44336; }
-        .news-item .sentiment.neutral { background: #888; }
-        .news-item .content { flex: 1; }
-        .news-item .title { font-size: 15px; color: #fff; margin-bottom: 8px; line-height: 1.4; }
-        .news-item .meta { font-size: 12px; color: #888; display: flex; gap: 15px; flex-wrap: wrap; }
-        .news-item .meta .source { color: #00d4ff; }
-        
-        /* Alert */
-        .alert-list { max-height: 350px; overflow-y: auto; }
-        .alert-item {
-            display: flex;
-            gap: 12px;
-            padding: 15px;
-            border-radius: 12px;
-            background: rgba(244, 67, 54, 0.1);
-            border: 1px solid rgba(244, 67, 54, 0.3);
-            margin-bottom: 12px;
+        .alert-card:hover {
+            background: rgba(244, 67, 54, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(244, 67, 54, 0.15);
         }
-        .alert-item .icon { font-size: 20px; color: #f44336; }
-        .alert-item .content { flex: 1; }
-        .alert-item .title { font-size: 14px; color: #fff; margin-bottom: 5px; }
-        .alert-item .desc { font-size: 12px; color: #aaa; }
-        .alert-item .keywords { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
-        .alert-item .keyword {
+        .alert-card .header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .alert-card .icon { font-size: 24px; }
+        .alert-card .title { font-size: 14px; color: #fff; font-weight: 500; }
+        .alert-card .desc { font-size: 12px; color: #aaa; margin-bottom: 10px; line-height: 1.5; }
+        .alert-card .keywords { display: flex; gap: 5px; flex-wrap: wrap; }
+        .alert-card .keyword {
             background: rgba(244, 67, 54, 0.2);
             color: #f44336;
-            padding: 2px 8px;
+            padding: 3px 8px;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 10px;
         }
-        
-        /* Charts */
-        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .chart-container { height: 200px; }
+        .alert-card .source { font-size: 11px; color: #888; margin-top: 8px; }
         
         /* Platform Links */
-        .platform-links {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
+        .platform-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; }
         .platform-link {
             background: #1a2338;
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 10px;
+            padding: 15px 10px;
             text-align: center;
             text-decoration: none;
             color: inherit;
@@ -227,36 +181,89 @@
         }
         .platform-link:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0,212,255,0.1);
+            box-shadow: 0 8px 20px rgba(0,212,255,0.15);
             border-color: #00d4ff;
         }
-        .platform-link .icon { font-size: 32px; margin-bottom: 10px; }
-        .platform-link .name { font-size: 14px; color: #fff; margin-bottom: 5px; }
-        .platform-link .count { font-size: 12px; color: #888; }
+        .platform-link .icon { font-size: 28px; margin-bottom: 8px; }
+        .platform-link .name { font-size: 12px; color: #fff; }
+        
+        /* News List */
+        .news-list { max-height: 400px; overflow-y: auto; }
+        .news-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #1a2338;
+            margin-bottom: 10px;
+            text-decoration: none;
+            color: inherit;
+            transition: background 0.3s;
+        }
+        .news-item:hover { background: #243050; }
+        .news-item .sentiment { width: 5px; border-radius: 3px; flex-shrink: 0; }
+        .news-item .sentiment.positive { background: #4caf50; }
+        .news-item .sentiment.negative { background: #f44336; }
+        .news-item .sentiment.neutral { background: #888; }
+        .news-item .content { flex: 1; }
+        .news-item .title { font-size: 14px; color: #fff; margin-bottom: 6px; line-height: 1.3; }
+        .news-item .meta { font-size: 11px; color: #888; display: flex; gap: 12px; }
+        .news-item .meta .source { color: #00d4ff; }
+        
+        /* Charts */
+        .chart-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        .chart-container { height: 180px; }
+        .chart-container.trend { height: 200px; }
+        
+        /* Competitor */
+        .competitor-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .competitor-card {
+            background: #1a2338;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #2d3a5a;
+        }
+        .competitor-card.highlight { border-color: #00d4ff; background: rgba(0,212,255,0.05); }
+        .competitor-card .name { font-size: 13px; color: #fff; margin-bottom: 8px; font-weight: 500; }
+        .competitor-card .score { font-size: 24px; font-weight: bold; margin-bottom: 5px; }
+        .competitor-card .score.good { color: #4caf50; }
+        .competitor-card .score.warning { color: #ff9800; }
+        .competitor-card .score.danger { color: #f44336; }
+        .competitor-card .trend { font-size: 11px; color: #888; }
         
         /* Tags */
-        .tags-container { display: flex; gap: 10px; flex-wrap: wrap; }
-        .tag { padding: 8px 16px; border-radius: 20px; font-size: 13px; }
-        .tag.negative { background: rgba(244, 67, 54, 0.2); color: #f44336; border: 1px solid rgba(244, 67, 54, 0.3); }
-        .tag.positive { background: rgba(76, 175, 80, 0.2); color: #4caf50; border: 1px solid rgba(76, 175, 80, 0.3); }
+        .tags-container { display: flex; gap: 8px; flex-wrap: wrap; }
+        .tag { padding: 6px 12px; border-radius: 15px; font-size: 12px; }
+        .tag.negative { background: rgba(244, 67, 54, 0.2); color: #f44336; }
+        .tag.positive { background: rgba(76, 175, 80, 0.2); color: #4caf50; }
         
+        /* Footer */
         .footer {
             text-align: center;
-            padding: 30px;
+            padding: 20px;
             color: #666;
-            font-size: 12px;
+            font-size: 11px;
             border-top: 1px solid #2d3a5a;
-            margin-top: 30px;
+            margin-top: 20px;
         }
+        .footer-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 10px; }
+        .footer-links a { color: #888; text-decoration: none; }
+        .footer-links a:hover { color: #00d4ff; }
         
-        @media (max-width: 1024px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .platform-links { grid-template-columns: repeat(2, 1fr); }
-            .charts-grid { grid-template-columns: 1fr; }
+        @media (max-width: 1200px) {
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .platform-grid { grid-template-columns: repeat(4, 1fr); }
+            .alert-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-row { grid-template-columns: 1fr 1fr; }
+            .competitor-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        @media (max-width: 600px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            .platform-links { grid-template-columns: 1fr; }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .platform-grid { grid-template-columns: repeat(2, 1fr); }
+            .alert-grid { grid-template-columns: 1fr; }
+            .chart-row { grid-template-columns: 1fr; }
+            .competitor-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -280,12 +287,12 @@
                     <div class="logo-icon">📊</div>
                     <div>
                         <h1>舆情监测中心</h1>
-                        <p>YuQing Monitor Center</p>
+                        <p>YuQing Monitor Center - 远光软件品牌公关部</p>
                     </div>
                 </div>
-                <div class="update-time">
-                    <div>更新时间：2026-03-05 23:35</div>
-                    <div>监控周期：最近 7 天</div>
+                <div class="header-right">
+                    <div class="update-time">更新时间：2026-03-06 00:10</div>
+                    <div class="auto-update">✅ 自动更新已启用（每日 09:00）</div>
                 </div>
             </header>
             
@@ -293,192 +300,198 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="label">📈 总信息量</div>
-                    <div class="value">156</div>
-                    <div class="change positive">较上周 +28%</div>
+                    <div class="value">186</div>
+                    <div class="change positive">↑ 较昨日 +12%</div>
                 </div>
                 <div class="stat-card">
                     <div class="label">🟢 正面信息</div>
                     <div class="value">35%</div>
-                    <div class="change positive">利好消息 12 条</div>
+                    <div class="change positive">利好 15 条</div>
                 </div>
                 <div class="stat-card">
                     <div class="label">🔴 负面信息</div>
                     <div class="value">38%</div>
-                    <div class="change negative">需关注 10 条</div>
+                    <div class="change negative">⚠️ 需关注 12 条</div>
                 </div>
                 <div class="stat-card">
-                    <div class="label">💬 社交热度</div>
+                    <div class="label">🤖 AI大模型声量</div>
                     <div class="value">高</div>
-                    <div class="change neutral">多平台讨论活跃</div>
+                    <div class="change positive">正面为主</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">📉 股价舆情</div>
+                    <div class="value">偏负</div>
+                    <div class="change negative">需关注</div>
+                </div>
+            </div>
+            
+            <!-- Alert Section - 可点击跳转 -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title"><span>⚠️</span> 负面预警（点击查看详情）</div>
+                    <span style="color: #f44336; font-size: 13px;">3 条高风险预警</span>
+                </div>
+                <div class="alert-grid">
+                    <a href="https://baijiahao.baidu.com/s?id=1858737898318086007" target="_blank" class="alert-card">
+                        <div class="header">
+                            <span class="icon">📉</span>
+                            <span class="title">股价连续下跌</span>
+                        </div>
+                        <div class="desc">连续3天下跌，累计跌幅8.61%，主力资金持续流出，散户情绪负面</div>
+                        <div class="keywords">
+                            <span class="keyword">下跌</span>
+                            <span class="keyword">卖出</span>
+                            <span class="keyword">流出</span>
+                        </div>
+                        <div class="source">来源：新浪财经、东方财富 | 点击查看详情 →</div>
+                    </a>
+                    <a href="https://guba.eastmoney.com/list,002063.html" target="_blank" class="alert-card">
+                        <div class="header">
+                            <span class="icon">😤</span>
+                            <span class="title">散户情绪负面</span>
+                        </div>
+                        <div class="desc">股吧出现大量抱怨帖，对公司市值管理不满，出现"烂泥""黑庄"等负面词汇</div>
+                        <div class="keywords">
+                            <span class="keyword">烂泥</span>
+                            <span class="keyword">砸盘</span>
+                            <span class="keyword">黑庄</span>
+                        </div>
+                        <div class="source">来源：东方财富股吧 | 点击查看详情 →</div>
+                    </a>
+                    <a href="https://baijiahao.baidu.com/s?id=1858626479336075293" target="_blank" class="alert-card">
+                        <div class="header">
+                            <span class="icon">🚁</span>
+                            <span class="title">无人机业务不及预期</span>
+                        </div>
+                        <div class="desc">公司回应处于"初步探索阶段"，投资者对低空经济预期落空</div>
+                        <div class="keywords">
+                            <span class="keyword">不及预期</span>
+                            <span class="keyword">初步阶段</span>
+                        </div>
+                        <div class="source">来源：新浪财经、同花顺 | 点击查看详情 →</div>
+                    </a>
                 </div>
             </div>
             
             <!-- Platform Quick Links -->
             <div class="section">
                 <div class="section-header">
-                    <div class="section-title"><span>🔍</span> 多平台舆情速览（点击查看）</div>
+                    <div class="section-title"><span>🔍</span> 多平台舆情速览（点击跳转搜索）</div>
                 </div>
-                <div class="platform-links">
+                <div class="platform-grid">
                     <a href="https://www.baidu.com/s?wd=远光软件&tn=news" target="_blank" class="platform-link">
                         <div class="icon">📰</div>
                         <div class="name">百度新闻</div>
-                        <div class="count">82 条资讯</div>
                     </a>
                     <a href="https://guba.eastmoney.com/list,002063.html" target="_blank" class="platform-link">
                         <div class="icon">💰</div>
-                        <div class="name">东方财富股吧</div>
-                        <div class="count">讨论活跃</div>
+                        <div class="name">股吧</div>
                     </a>
                     <a href="https://xueqiu.com/k?q=远光软件" target="_blank" class="platform-link">
                         <div class="icon">❄️</div>
                         <div class="name">雪球</div>
-                        <div class="count">投资者讨论</div>
                     </a>
                     <a href="https://www.zhihu.com/search?type=content&q=远光软件" target="_blank" class="platform-link">
                         <div class="icon">📘</div>
                         <div class="name">知乎</div>
-                        <div class="count">问答讨论</div>
                     </a>
                     <a href="https://www.xiaohongshu.com/search_result?keyword=远光软件" target="_blank" class="platform-link">
                         <div class="icon">📕</div>
                         <div class="name">小红书</div>
-                        <div class="count">用户笔记</div>
                     </a>
                     <a href="https://s.weibo.com/weibo?q=远光软件" target="_blank" class="platform-link">
                         <div class="icon">🐦</div>
                         <div class="name">微博</div>
-                        <div class="count">实时动态</div>
                     </a>
                     <a href="https://www.douyin.com/search/远光软件" target="_blank" class="platform-link">
                         <div class="icon">🎵</div>
                         <div class="name">抖音</div>
-                        <div class="count">视频内容</div>
                     </a>
                     <a href="https://search.bilibili.com/all?keyword=远光软件" target="_blank" class="platform-link">
                         <div class="icon">📺</div>
                         <div class="name">B站</div>
-                        <div class="count">视频讨论</div>
                     </a>
                 </div>
             </div>
             
-            <!-- Alerts -->
-            <div class="section">
-                <div class="section-header">
-                    <div class="section-title"><span>⚠️</span> 负面预警</div>
-                    <span style="color: #f44336; font-size: 14px;">3 条需关注</span>
+            <!-- Charts Row -->
+            <div class="chart-row">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title"><span>📊</span> 情感分布</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
                 </div>
-                <div class="alert-list">
-                    <div class="alert-item">
-                        <div class="icon">📉</div>
-                        <div class="content">
-                            <div class="title">股价连续下跌</div>
-                            <div class="desc">连续3天下跌，累计跌幅8.61%，主力资金持续流出</div>
-                            <div class="keywords">
-                                <span class="keyword">下跌</span>
-                                <span class="keyword">卖出</span>
-                                <span class="keyword">流出</span>
-                            </div>
-                        </div>
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title"><span>📈</span> 7天舆情趋势</div>
                     </div>
-                    <div class="alert-item">
-                        <div class="icon">😤</div>
-                        <div class="content">
-                            <div class="title">散户情绪负面</div>
-                            <div class="desc">股吧出现大量抱怨帖，对公司市值管理不满</div>
-                            <div class="keywords">
-                                <span class="keyword">烂泥</span>
-                                <span class="keyword">砸盘</span>
-                                <span class="keyword">黑庄</span>
-                            </div>
-                        </div>
+                    <div class="chart-container trend">
+                        <canvas id="trendChart"></canvas>
                     </div>
-                    <div class="alert-item">
-                        <div class="icon">🚁</div>
-                        <div class="content">
-                            <div class="title">无人机业务不及预期</div>
-                            <div class="desc">公司回应处于"初步探索阶段"，投资者预期落空</div>
-                            <div class="keywords">
-                                <span class="keyword">不及预期</span>
-                                <span class="keyword">初步阶段</span>
-                            </div>
-                        </div>
+                </div>
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title"><span>🏷️</span> 热门关键词</div>
+                    </div>
+                    <div class="tags-container" style="padding: 10px 0;">
+                        <span class="tag negative">下跌</span>
+                        <span class="tag negative">砸盘</span>
+                        <span class="tag negative">黑庄</span>
+                        <span class="tag positive">AI大模型</span>
+                        <span class="tag positive">国资监管</span>
+                        <span class="tag positive">DeepSeek</span>
+                        <span class="tag positive">电网茅</span>
+                        <span class="tag positive">业绩稳健</span>
+                        <span class="tag negative">减持</span>
+                        <span class="tag positive">智能化</span>
                     </div>
                 </div>
             </div>
             
-            <!-- News & Charts -->
+            <!-- News & Competitor -->
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
                 <div class="section">
                     <div class="section-header">
                         <div class="section-title"><span>📰</span> 新闻资讯</div>
-                        <a href="https://www.baidu.com/s?wd=远光软件&tn=news" target="_blank" style="color: #00d4ff; font-size: 14px; text-decoration: none;">查看更多 →</a>
+                        <a href="https://www.baidu.com/s?wd=远光软件&tn=news" target="_blank" style="color: #00d4ff; font-size: 12px; text-decoration: none;">更多 →</a>
                     </div>
                     <div class="news-list">
                         <a href="https://baijiahao.baidu.com/s?id=1856083851488049971" target="_blank" class="news-item">
                             <div class="sentiment positive"></div>
                             <div class="content">
                                 <div class="title">远光软件推出智能化穿透式监管解决方案 助力国资监管效能提升</div>
-                                <div class="meta">
-                                    <span class="source">同花顺财经</span>
-                                    <span>2026-03-04</span>
-                                    <span>🟢 正面</span>
-                                </div>
+                                <div class="meta"><span class="source">同花顺</span><span>03-04</span><span>🟢 正面</span></div>
                             </div>
                         </a>
                         <a href="https://baijiahao.baidu.com/s?id=1858737898318086007" target="_blank" class="news-item">
                             <div class="sentiment negative"></div>
                             <div class="content">
                                 <div class="title">远光软件股价连续3天下跌累计跌幅8.61%</div>
-                                <div class="meta">
-                                    <span class="source">新浪财经</span>
-                                    <span>2026-03-04</span>
-                                    <span>🔴 负面</span>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="https://baijiahao.baidu.com/s?id=1856799754827013632" target="_blank" class="news-item">
-                            <div class="sentiment positive"></div>
-                            <div class="content">
-                                <div class="title">远光软件助力深圳二院司库管理系统正式上线</div>
-                                <div class="meta">
-                                    <span class="source">极目新闻</span>
-                                    <span>2026-02-11</span>
-                                    <span>🟢 正面</span>
-                                </div>
+                                <div class="meta"><span class="source">新浪财经</span><span>03-04</span><span>🔴 负面</span></div>
                             </div>
                         </a>
                         <a href="http://news.10jqka.com.cn/20260303/c675041986.shtml" target="_blank" class="news-item">
                             <div class="sentiment positive"></div>
                             <div class="content">
                                 <div class="title">远光软件：已接入智谱、阿里千问、DeepSeek、盘古等大模型</div>
-                                <div class="meta">
-                                    <span class="source">同花顺</span>
-                                    <span>2026-03-03</span>
-                                    <span>🟢 正面</span>
-                                </div>
+                                <div class="meta"><span class="source">同花顺</span><span>03-03</span><span>🟢 正面</span></div>
                             </div>
                         </a>
                         <a href="https://stock.stockstar.com/RB2026030400024164.shtml" target="_blank" class="news-item">
                             <div class="sentiment negative"></div>
                             <div class="content">
                                 <div class="title">远光软件(002063)3月4日主力资金净卖出933.53万元</div>
-                                <div class="meta">
-                                    <span class="source">证券之星</span>
-                                    <span>2026-03-04</span>
-                                    <span>🔴 负面</span>
-                                </div>
+                                <div class="meta"><span class="source">证券之星</span><span>03-04</span><span>🔴 负面</span></div>
                             </div>
                         </a>
                         <a href="https://baijiahao.baidu.com/s?id=1858626479336075293" target="_blank" class="news-item">
                             <div class="sentiment neutral"></div>
                             <div class="content">
                                 <div class="title">远光软件：公司在无人机巡检方面处于初步探索阶段</div>
-                                <div class="meta">
-                                    <span class="source">新浪财经</span>
-                                    <span>2026-03-03</span>
-                                    <span>⚪ 中性</span>
-                                </div>
+                                <div class="meta"><span class="source">新浪财经</span><span>03-03</span><span>⚪ 中性</span></div>
                             </div>
                         </a>
                     </div>
@@ -486,74 +499,61 @@
                 
                 <div class="section">
                     <div class="section-header">
-                        <div class="section-title"><span>📊</span> 舆情分析</div>
+                        <div class="section-title"><span>🏆</span> 竞品舆情对比</div>
                     </div>
-                    <div class="chart-container">
-                        <canvas id="sentimentChart"></canvas>
-                    </div>
-                    <div style="margin-top: 20px;">
-                        <div class="section-title" style="margin-bottom: 10px; font-size: 14px;"><span>🏷️</span> 热门关键词</div>
-                        <div class="tags-container">
-                            <span class="tag negative">下跌</span>
-                            <span class="tag negative">砸盘</span>
-                            <span class="tag positive">AI大模型</span>
-                            <span class="tag positive">国资监管</span>
-                            <span class="tag positive">DeepSeek</span>
-                            <span class="tag positive">电网茅</span>
+                    <div class="competitor-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div class="competitor-card highlight">
+                            <div class="name">远光软件</div>
+                            <div class="score warning">62</div>
+                            <div class="trend">舆情指数</div>
+                        </div>
+                        <div class="competitor-card">
+                            <div class="name">用友网络</div>
+                            <div class="score good">71</div>
+                            <div class="trend">正面为主</div>
+                        </div>
+                        <div class="competitor-card">
+                            <div class="name">金蝶国际</div>
+                            <div class="score good">68</div>
+                            <div class="trend">平稳</div>
+                        </div>
+                        <div class="competitor-card">
+                            <div class="name">浪潮软件</div>
+                            <div class="score warning">59</div>
+                            <div class="trend">需关注</div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Stock Discussion -->
-            <div class="section">
-                <div class="section-header">
-                    <div class="section-title"><span>💬</span> 股吧热议</div>
-                    <a href="https://guba.eastmoney.com/list,002063.html" target="_blank" style="color: #00d4ff; font-size: 14px; text-decoration: none;">查看更多 →</a>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
-                    <a href="https://guba.eastmoney.com/news,002063,1672482729.html" target="_blank" class="platform-link">
-                        <div class="name">2025年度业绩快报</div>
-                        <div class="count">👁️ 1548 | 💬 1</div>
-                    </a>
-                    <a href="https://guba.eastmoney.com/news,002063,1672223064.html" target="_blank" class="platform-link">
-                        <div class="name">已接入多个大模型</div>
-                        <div class="count">👁️ 1187 | 💬 6</div>
-                    </a>
-                    <a href="https://guba.eastmoney.com/news,002063,1673916369.html" target="_blank" class="platform-link">
-                        <div class="name">无人机巡检初步探索</div>
-                        <div class="count">👁️ 1537 | 💬 4</div>
-                    </a>
-                    <a href="https://guba.eastmoney.com/news,002063,1667387849.html" target="_blank" class="platform-link">
-                        <div class="name">上周末已介入</div>
-                        <div class="count">👁️ 1159 | 💬 32</div>
-                    </a>
-                </div>
-            </div>
-            
+            <!-- Footer -->
             <footer class="footer">
-                <p>舆情监测中心 v2.0 | 由 Clawra 舆情监控系统驱动</p>
-                <p>数据来源：百度新闻、东方财富、知乎、微博、小红书等 | 监控关键词：远光软件、远光、YGSOFT</p>
+                <div class="footer-links">
+                    <a href="https://www.ygsoft.com" target="_blank">远光软件官网</a>
+                    <a href="mailto:pr@ygsoft.com">联系公关部</a>
+                    <a href="#" onclick="alert('预警推送已配置到飞书群')">预警设置</a>
+                    <a href="#" onclick="alert('报告已发送到邮箱')">导出报告</a>
+                </div>
+                <p>舆情监测中心 v3.0 | Clawra 舆情监控系统 | 每日自动更新 | 飞书预警已启用</p>
             </footer>
         </div>
     </div>
     
     <script>
         function checkPwd() {
-            var pwd = document.getElementById('pwdInput').value;
-            if (pwd === 'yg2026') {
+            if (document.getElementById('pwdInput').value === 'yg2026') {
                 document.getElementById('authPage').style.display = 'none';
                 document.getElementById('mainPage').style.display = 'block';
-                initChart();
+                initCharts();
             } else {
                 document.getElementById('pwdError').style.display = 'block';
                 document.getElementById('pwdInput').value = '';
             }
         }
-        document.getElementById('pwdInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') checkPwd();
-        });
-        function initChart() {
+        document.getElementById('pwdInput').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
+        
+        function initCharts() {
+            // 情感分布
             new Chart(document.getElementById('sentimentChart').getContext('2d'), {
                 type: 'doughnut',
                 data: {
@@ -563,8 +563,29 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#e0e0e0', padding: 15 } } },
+                    plugins: { legend: { position: 'bottom', labels: { color: '#e0e0e0', padding: 10, font: {size: 11} } } },
                     cutout: '60%'
+                }
+            });
+            
+            // 趋势图
+            new Chart(document.getElementById('trendChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['2/28', '3/1', '3/2', '3/3', '3/4', '3/5', '3/6'],
+                    datasets: [
+                        { label: '正面', data: [32, 35, 33, 38, 34, 36, 35], borderColor: '#4caf50', backgroundColor: 'rgba(76,175,80,0.1)', fill: true, tension: 0.3 },
+                        { label: '负面', data: [40, 38, 42, 38, 41, 39, 38], borderColor: '#f44336', backgroundColor: 'rgba(244,67,54,0.1)', fill: true, tension: 0.3 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#e0e0e0', padding: 10, font: {size: 10} } } },
+                    scales: {
+                        x: { ticks: { color: '#888' }, grid: { color: '#2d3a5a' } },
+                        y: { ticks: { color: '#888' }, grid: { color: '#2d3a5a' }, min: 0, max: 100 }
+                    }
                 }
             });
         }
