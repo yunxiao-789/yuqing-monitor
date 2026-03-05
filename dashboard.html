@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>舆情监测中心 - 远光软件</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Password Protection Style -->
+    <style id="loading-hide">body{visibility:hidden;}</style>
+    <style>
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999999;
+        }
+        .auth-box {
+            background: linear-gradient(145deg, #1e2745, #232d4a);
+            padding: 50px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid #2d3a5a;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.6);
+            max-width: 400px;
+        }
+        .auth-box .icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+        .auth-box h2 {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 26px;
+        }
+        .auth-box .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .auth-box input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid #2d3a5a;
+            border-radius: 12px;
+            background: #1a2338;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+        .auth-box input:focus {
+            border-color: #00d4ff;
+        }
+        .auth-box button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .auth-box button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4);
+        }
+        .auth-error {
+            color: #f44336;
+            font-size: 13px;
+            margin-top: 15px;
+            display: none;
+        }
+        .main-content { display: none; }
+    </style>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #2d3a5a;
+            margin-bottom: 30px;
+        }
+        .logo { display: flex; align-items: center; gap: 15px; }
+        .logo-icon {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .logo h1 { font-size: 24px; color: #fff; }
+        .logo p { font-size: 12px; color: #888; }
+        .update-time { text-align: right; font-size: 14px; color: #888; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(145deg, #1e2745, #232d4a);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid #2d3a5a;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
+        }
+        .stat-card .label { font-size: 14px; color: #888; margin-bottom: 10px; }
+        .stat-card .value { font-size: 32px; font-weight: bold; color: #fff; }
+        .stat-card .change { font-size: 12px; margin-top: 5px; }
+        .stat-card .change.positive { color: #4caf50; }
+        .stat-card .change.negative { color: #f44336; }
+        .stat-card .change.neutral { color: #888; }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .section {
+            background: linear-gradient(145deg, #1e2745, #232d4a);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid #2d3a5a;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #2d3a5a;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .news-list { max-height: 500px; overflow-y: auto; }
+        .news-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            background: #1a2338;
+            margin-bottom: 12px;
+            transition: background 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .news-item:hover { background: #243050; }
+        .news-item .sentiment { width: 6px; border-radius: 3px; flex-shrink: 0; }
+        .news-item .sentiment.positive { background: #4caf50; }
+        .news-item .sentiment.negative { background: #f44336; }
+        .news-item .sentiment.neutral { background: #888; }
+        .news-item .content { flex: 1; }
+        .news-item .title { font-size: 15px; color: #fff; margin-bottom: 8px; line-height: 1.4; }
+        .news-item .meta { font-size: 12px; color: #888; display: flex; gap: 15px; }
+        .news-item .meta .source { color: #00d4ff; }
+        .alert-list { max-height: 300px; overflow-y: auto; }
+        .alert-item {
+            display: flex;
+            gap: 12px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            margin-bottom: 12px;
+        }
+        .alert-item .icon { font-size: 20px; color: #f44336; }
+        .alert-item .content { flex: 1; }
+        .alert-item .title { font-size: 14px; color: #fff; margin-bottom: 5px; }
+        .alert-item .desc { font-size: 12px; color: #aaa; }
+        .alert-item .keywords { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+        .alert-item .keyword {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        .chart-container { height: 200px; margin-top: 20px; }
+        .guba-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .guba-item {
+            background: #1a2338;
+            border-radius: 12px;
+            padding: 15px;
+            text-decoration: none;
+            color: inherit;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .guba-item:hover { background: #243050; transform: translateY(-3px); }
+        .guba-item .title {
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .guba-item .stats { display: flex; gap: 15px; font-size: 12px; color: #888; }
+        .guba-item .stats span { display: flex; align-items: center; gap: 5px; }
+        .tags-section { margin-top: 30px; }
+        .tags-container { display: flex; gap: 10px; flex-wrap: wrap; }
+        .tag {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tag.negative {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        .tag.positive {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        .tag:hover { transform: scale(1.05); }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 12px;
+            border-top: 1px solid #2d3a5a;
+            margin-top: 30px;
+        }
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .main-grid { grid-template-columns: 1fr; }
+            .guba-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr; } }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1a2338; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #3d4a6a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4d5a7a; }
+    </style>
+</head>
+<body>
+    <!-- Password Auth Overlay -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-box">
+            <div class="icon">🔐</div>
+            <h2>舆情监测中心</h2>
+            <p class="subtitle">请输入访问密码</p>
+            <input type="password" id="passwordInput" placeholder="输入密码..." onkeypress="if(event.key==='Enter')checkPassword()">
+            <button onclick="checkPassword()">进入系统</button>
+            <div class="auth-error" id="authError">密码错误，请重试</div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <header class="header">
+                <div class="logo">
+                    <div class="logo-icon">📊</div>
+                    <div>
+                        <h1>舆情监测中心</h1>
+                        <p>YuQing Monitor Center</p>
+                    </div>
+                </div>
+                <div class="update-time">
+                    <div>更新时间：2026-03-05 09:50</div>
+                    <div>监控周期：最近 7 天</div>
+                </div>
+            </header>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="label">📈 总信息量</div>
+                    <div class="value">82</div>
+                    <div class="change positive">较上周 +15%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">🟢 正面信息</div>
+                    <div class="value">30%</div>
+                    <div class="change positive">利好消息 6 条</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">🔴 负面信息</div>
+                    <div class="value">40%</div>
+                    <div class="change negative">需关注 8 条</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">💬 股吧热度</div>
+                    <div class="value">高</div>
+                    <div class="change neutral">最高阅读 8367</div>
+                </div>
+            </div>
+            
+            <div class="main-grid">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title"><span>📰</span> 新闻资讯</div>
+                        <span style="color: #888; font-size: 14px;">实时更新</span>
+                    </div>
+                    <div class="news-list">
+                        <a href="https://baijiahao.baidu.com/s?id=1856083851488049971" target="_blank" class="news-item">
+                            <div class="sentiment positive"></div>
+                            <div class="content">
+                                <div class="title">远光软件推出智能化穿透式监管解决方案 助力国资监管效能提升</div>
+                                <div class="meta">
+                                    <span class="source">同花顺财经</span>
+                                    <span>2026-03-04</span>
+                                    <span>🟢 正面</span>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="https://baijiahao.baidu.com/s?id=1858737898318086007" target="_blank" class="news-item">
+                            <div class="sentiment negative"></div>
+                            <div class="content">
+                                <div class="title">远光软件股价连续3天下跌累计跌幅8.61%</div>
+                                <div class="meta">
+                                    <span class="source">新浪财经</span>
+                                    <span>2026-03-04</span>
+                                    <span>🔴 负面</span>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="https://baijiahao.baidu.com/s?id=1856799754827013632" target="_blank" class="news-item">
+                            <div class="sentiment positive"></div>
+                            <div class="content">
+                                <div class="title">远光软件助力深圳二院司库管理系统正式上线</div>
+                                <div class="meta">
+                                    <span class="source">极目新闻</span>
+                                    <span>2026-02-11</span>
+                                    <span>🟢 正面</span>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="https://baijiahao.baidu.com/s?id=1856083851488049971" target="_blank" class="news-item">
+                            <div class="sentiment positive"></div>
+                            <div class="content">
+                                <div class="title">远光软件深化数智创新，2026年重点紧抓能源转型与数字经济新机遇</div>
+                                <div class="meta">
+                                    <span class="source">极目新闻</span>
+                                    <span>2026-02-03</span>
+                                    <span>🟢 正面</span>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="http://news.10jqka.com.cn/00000000/c675084806.shtml" target="_blank" class="news-item">
+                            <div class="sentiment neutral"></div>
+                            <div class="content">
+                                <div class="title">远光软件：融资净偿还36.75万元，融资余额6.67亿元</div>
+                                <div class="meta">
+                                    <span class="source">同花顺</span>
+                                    <span>2026-03-05</span>
+                                    <span>⚪ 中性</span>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="https://baijiahao.baidu.com/s?id=1858626479336075293" target="_blank" class="news-item">
+                            <div class="sentiment neutral"></div>
+                            <div class="content">
+                                <div class="title">远光软件：公司在无人机巡检方面处于初步探索阶段</div>
+                                <div class="meta">
+                                    <span class="source">新浪财经</span>
+                                    <span>2026-03-03</span>
+                                    <span>⚪ 中性</span>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="https://baijiahao.baidu.com/s?id=1858630931655899915" target="_blank" class="news-item">
+                            <div class="sentiment neutral"></div>
+                            <div class="content">
+                                <div class="title">远光软件：截至2月28日股东总户数79582户</div>
+                                <div class="meta">
+                                    <span class="source">证券日报</span>
+                                    <span>2026-03-03</span>
+                                    <span>⚪ 中性</span>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="https://stock.stockstar.com/RB2026030400024164.shtml" target="_blank" class="news-item">
+                            <div class="sentiment negative"></div>
+                            <div class="content">
+                                <div class="title">远光软件(002063)3月4日主力资金净卖出933.53万元</div>
+                                <div class="meta">
+                                    <span class="source">证券之星</span>
+                                    <span>2026-03-04</span>
+                                    <span>🔴 负面</span>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="http://news.10jqka.com.cn/20260303/c675041986.shtml" target="_blank" class="news-item">
+                            <div class="sentiment positive"></div>
+                            <div class="content">
+                                <div class="title">远光软件：已接入智谱、阿里千问、DeepSeek、盘古等大模型</div>
+                                <div class="meta">
+                                    <span class="source">同花顺</span>
+                                    <span>2026-03-03</span>
+                                    <span>🟢 正面</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title"><span>⚠️</span> 负面预警</div>
+                    </div>
+                    <div class="alert-list">
+                        <div class="alert-item">
+                            <div class="icon">📉</div>
+                            <div class="content">
+                                <div class="title">股价连续下跌</div>
+                                <div class="desc">连续3天下跌，累计跌幅8.61%，主力资金持续流出</div>
+                                <div class="keywords">
+                                    <span class="keyword">下跌</span>
+                                    <span class="keyword">卖出</span>
+                                    <span class="keyword">流出</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert-item">
+                            <div class="icon">😤</div>
+                            <div class="content">
+                                <div class="title">散户情绪负面</div>
+                                <div class="desc">股吧出现大量抱怨帖，对公司市值管理不满</div>
+                                <div class="keywords">
+                                    <span class="keyword">烂泥</span>
+                                    <span class="keyword">砸盘</span>
+                                    <span class="keyword">黑庄</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert-item">
+                            <div class="icon">🚁</div>
+                            <div class="content">
+                                <div class="title">无人机业务不及预期</div>
+                                <div class="desc">公司回应处于"初步探索阶段"，投资者预期落空</div>
+                                <div class="keywords">
+                                    <span class="keyword">不及预期</span>
+                                    <span class="keyword">初步阶段</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title"><span>💬</span> 股吧热议</div>
+                    <a href="https://guba.eastmoney.com/list,002063.html" target="_blank" style="color: #00d4ff; font-size: 14px; text-decoration: none;">查看更多 →</a>
+                </div>
+                <div class="guba-grid">
+                    <a href="https://guba.eastmoney.com/news,002063,1672482729.html" target="_blank" class="guba-item">
+                        <div class="title">远光软件：2025年度业绩快报</div>
+                        <div class="stats">
+                            <span>👁️ 1548</span>
+                            <span>💬 1</span>
+                            <span style="color: #888;">⚪ 中性</span>
+                        </div>
+                    </a>
+                    <a href="https://guba.eastmoney.com/news,002063,1673916369.html" target="_blank" class="guba-item">
+                        <div class="title">远光软件：公司在无人机巡检方面处于初步探索阶段</div>
+                        <div class="stats">
+                            <span>👁️ 1537</span>
+                            <span>💬 4</span>
+                            <span style="color: #f44336;">🔴 偏负面</span>
+                        </div>
+                    </a>
+                    <a href="https://guba.eastmoney.com/news,002063,1672223064.html" target="_blank" class="guba-item">
+                        <div class="title">远光软件：已接入智谱、阿里千问、DeepSeek、盘古等大模型</div>
+                        <div class="stats">
+                            <span>👁️ 1187</span>
+                            <span>💬 6</span>
+                            <span style="color: #4caf50;">🟢 正面</span>
+                        </div>
+                    </a>
+                    <a href="https://guba.eastmoney.com/news,002063,1667387849.html" target="_blank" class="guba-item">
+                        <div class="title">上周末我们已经介入远光软件，部分粉丝是知道的</div>
+                        <div class="stats">
+                            <span>👁️ 1159</span>
+                            <span>💬 32</span>
+                            <span style="color: #888;">⚪ 中性</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="section tags-section">
+                <div class="section-title" style="margin-bottom: 15px;"><span>🏷️</span> 热门关键词</div>
+                <div class="tags-container">
+                    <span class="tag negative">下跌</span>
+                    <span class="tag negative">砸盘</span>
+                    <span class="tag negative">黑庄</span>
+                    <span class="tag positive">AI大模型</span>
+                    <span class="tag positive">国资监管</span>
+                    <span class="tag positive">智能电网</span>
+                    <span class="tag positive">业绩稳健</span>
+                    <span class="tag positive">电网茅</span>
+                    <span class="tag positive">DeepSeek</span>
+                </div>
+            </div>
+            
+            <footer class="footer">
+                <p>舆情监测中心 v1.0 | 由 Clawra 舆情监控系统驱动</p>
+                <p>数据来源：百度新闻、东方财富股吧 | 监控关键词：远光软件、远光、YGSOFT</p>
+            </footer>
+        </div>
+    </div>
+    
+    <script>
+        // Password Protection
+        const CORRECT_PASSWORD = 'yg2026';
+        
+        function checkPassword() {
+            const input = document.getElementById('passwordInput');
+            const error = document.getElementById('authError');
+            
+            if (input.value === CORRECT_PASSWORD) {
+                document.getElementById('authOverlay').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('loading-hide').remove();
+                initChart();
+            } else {
+                error.style.display = 'block';
+                input.value = '';
+                input.focus();
+            }
+        }
+        
+        function initChart() {
+            const ctx = document.getElementById('sentimentChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['正面', '负面', '中性'],
+                    datasets: [{
+                        data: [30, 40, 30],
+                        backgroundColor: [
+                            'rgba(76, 175, 80, 0.8)',
+                            'rgba(244, 67, 54, 0.8)',
+                            'rgba(136, 136, 136, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(76, 175, 80, 1)',
+                            'rgba(244, 67, 54, 1)',
+                            'rgba(136, 136, 136, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#e0e0e0', padding: 15, font: { size: 12 } }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        }
+    </script>
+</body>
+</html>
