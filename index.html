@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>友商网络舆情 & 情报动态监测中心</title>
+    <title>友商网络舆情 & 情报动态监测中心 v6.0</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,83 +16,151 @@
         .auth-error { color: #f44336; font-size: 13px; margin-top: 10px; display: none; }
         #mainPage { display: none; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #e0e0e0; min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
         .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #2d3a5a; margin-bottom: 25px; }
         .logo h1 { font-size: 28px; color: #fff; margin-bottom: 5px; }
         .logo p { font-size: 14px; color: #666; }
+        
+        /* 筛选器区域 */
+        .filter-bar { background: linear-gradient(145deg, #1e2745, #232d4a); border-radius: 12px; padding: 15px 20px; margin-bottom: 20px; border: 1px solid #2d3a5a; display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
+        .filter-group { display: flex; gap: 8px; align-items: center; }
+        .filter-label { font-size: 13px; color: #888; }
+        .filter-select { padding: 8px 12px; background: #1a2338; border: 1px solid #2d3a5a; border-radius: 6px; color: #fff; font-size: 13px; outline: none; cursor: pointer; }
+        .filter-select:hover { border-color: #00d4ff; }
+        .search-box { flex: 1; display: flex; gap: 8px; }
+        .search-input { flex: 1; padding: 8px 12px; background: #1a2338; border: 1px solid #2d3a5a; border-radius: 6px; color: #fff; font-size: 13px; outline: none; }
+        .search-input:focus { border-color: #00d4ff; }
+        .search-btn { padding: 8px 16px; background: #00d4ff; border: none; border-radius: 6px; color: #fff; font-size: 13px; cursor: pointer; }
+        .search-btn:hover { background: #00b8e6; }
         
         /* 公司切换 */
         .company-tabs { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
         .company-tab { padding: 12px 24px; background: #1e2745; border: 1px solid #2d3a5a; border-radius: 25px; color: #888; cursor: pointer; transition: all 0.3s; font-size: 14px; }
         .company-tab:hover { background: #2d3a5a; color: #fff; }
-        .company-tab.active { background: #00d4ff; color: #fff; border-color: #00d4ff; font-weight: 600; }
+        .company-tab.active { background: #00d4ff; color: #fff; border-color: #00d4ff; font-weight: 600; box-shadow: 0 4px 12px rgba(0,212,255,0.3); }
         
-        /* 情报时间范围 */
+        /* 时间范围 */
         .time-range { background: linear-gradient(145deg, #1e2745, #232d4a); border-radius: 12px; padding: 15px 20px; margin-bottom: 20px; border: 1px solid #2d3a5a; display: flex; justify-content: space-between; align-items: center; }
         .time-range .label { font-size: 14px; color: #888; }
         .time-range .value { font-size: 16px; color: #00d4ff; font-weight: 600; }
         
-        /* 主要内容区 */
-        .main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px; }
+        /* 主内容区 - 三栏布局 */
+        .main-grid { display: grid; grid-template-columns: 250px 1fr 350px; gap: 20px; margin-bottom: 20px; }
         
-        /* 左侧：舆情和资讯 */
-        .section { background: linear-gradient(145deg, #1e2745, #232d4a); border-radius: 16px; padding: 20px; border: 1px solid #2d3a5a; margin-bottom: 20px; }
+        /* 左侧边栏 */
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .section { background: linear-gradient(145deg, #1e2745, #232d4a); border-radius: 16px; padding: 20px; border: 1px solid #2d3a5a; }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid #2d3a5a; }
-        .section-title { font-size: 18px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .section-title { font-size: 16px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px; }
         
-        /* 资讯列表 */
-        .news-list { max-height: 500px; overflow-y: auto; }
-        .news-item { display: flex; gap: 12px; padding: 15px; background: #1a2338; border-radius: 10px; margin-bottom: 12px; transition: all 0.3s; text-decoration: none; color: inherit; }
+        /* 统计卡片 */
+        .stats-card { background: #1a2338; border-radius: 12px; padding: 15px; margin-bottom: 12px; position: relative; }
+        .stats-card .label { font-size: 12px; color: #888; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+        .stats-card .label .info-icon { cursor: help; color: #666; font-size: 11px; }
+        .stats-card .value { font-size: 28px; font-weight: bold; color: #fff; margin-bottom: 5px; }
+        .stats-card .change { font-size: 12px; }
+        .stats-card .change.positive { color: #4caf50; }
+        .stats-card .change.negative { color: #f44336; }
+        .stats-card .description { font-size: 10px; color: #666; margin-top: 8px; line-height: 1.4; padding-top: 8px; border-top: 1px solid #2d3a5a; }
+        
+        /* 数据说明提示框 */
+        .tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #2d3a5a; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 11px; width: 200px; z-index: 100; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .stats-card .label:hover .tooltip { display: block; }
+        .tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: #2d3a5a; }
+        
+        /* 情感分布条 */
+        .sentiment-bar { display: flex; height: 24px; border-radius: 12px; overflow: hidden; margin: 12px 0; }
+        .sentiment-bar .positive { background: #4caf50; transition: width 0.3s; }
+        .sentiment-bar .negative { background: #f44336; transition: width 0.3s; }
+        .sentiment-bar .neutral { background: #888; transition: width 0.3s; }
+        .sentiment-legend { display: flex; gap: 15px; font-size: 11px; color: #888; }
+        .sentiment-legend span { display: flex; align-items: center; gap: 5px; }
+        .sentiment-legend .dot { width: 8px; height: 8px; border-radius: 50%; }
+        
+        /* 情报维度标签 */
+        .dimension-tags { display: flex; flex-direction: column; gap: 8px; }
+        .dimension-tag { padding: 10px 12px; background: #1a2338; border-radius: 8px; font-size: 12px; color: #fff; cursor: pointer; transition: all 0.3s; border: 1px solid transparent; }
+        .dimension-tag:hover { background: #243050; }
+        .dimension-tag.active { border-color: #00d4ff; background: rgba(0,212,255,0.1); }
+        .dimension-tag .count { float: right; background: #2d3a5a; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+        .dimension-tag.state-owned { border-left: 3px solid #ff9800; }
+        .dimension-tag.digital { border-left: 3px solid #2196f3; }
+        .dimension-tag.regulation { border-left: 3px solid #9c27b0; }
+        .dimension-tag.product { border-left: 3px solid #4caf50; }
+        .dimension-tag.market { border-left: 3px solid #e91e63; }
+        .dimension-tag.finance { border-left: 3px solid #3f51b5; }
+        .dimension-tag.partner { border-left: 3px solid #00bcd4; }
+        
+        /* 中间资讯列表 */
+        .news-section { background: linear-gradient(145deg, #1e2745, #232d4a); border-radius: 16px; padding: 20px; border: 1px solid #2d3a5a; }
+        .news-list { max-height: 600px; overflow-y: auto; }
+        .news-item { display: flex; gap: 12px; padding: 15px; background: #1a2338; border-radius: 10px; margin-bottom: 12px; transition: all 0.3s; cursor: pointer; }
         .news-item:hover { background: #243050; transform: translateX(5px); }
+        .news-item.highlight { border: 1px solid #ff9800; background: rgba(255,152,0,0.05); }
+        .news-item.negative-alert { border: 1px solid #f44336; background: rgba(244,67,54,0.05); }
         .news-item .sentiment { width: 4px; border-radius: 2px; flex-shrink: 0; }
         .news-item .sentiment.positive { background: #4caf50; }
         .news-item .sentiment.negative { background: #f44336; }
         .news-item .sentiment.neutral { background: #888; }
         .news-item .content { flex: 1; }
-        .news-item .title { font-size: 15px; color: #fff; margin-bottom: 8px; line-height: 1.4; }
-        .news-item .meta { display: flex; gap: 15px; font-size: 12px; color: #666; }
+        .news-item .title { font-size: 14px; color: #fff; margin-bottom: 8px; line-height: 1.4; }
+        .news-item .meta { display: flex; gap: 12px; font-size: 11px; color: #666; align-items: center; flex-wrap: wrap; }
         .news-item .meta .source { color: #00d4ff; }
-        .news-item .meta .platform { background: rgba(0,212,255,0.1); color: #00d4ff; padding: 2px 8px; border-radius: 4px; }
+        .news-item .meta .platform { background: rgba(0,212,255,0.1); color: #00d4ff; padding: 2px 6px; border-radius: 4px; }
+        .news-item .meta .dimension { padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+        .news-item .meta .dimension.state-owned { background: rgba(255,152,0,0.2); color: #ff9800; }
+        .news-item .meta .dimension.digital { background: rgba(33,150,243,0.2); color: #2196f3; }
+        .news-item .meta .dimension.regulation { background: rgba(156,39,176,0.2); color: #9c27b0; }
         
-        /* 右侧：舆情概览 */
-        .stats-card { background: #1a2338; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
-        .stats-card .label { font-size: 13px; color: #888; margin-bottom: 10px; }
-        .stats-card .value { font-size: 32px; font-weight: bold; color: #fff; margin-bottom: 5px; }
-        .stats-card .change { font-size: 13px; }
-        .stats-card .change.positive { color: #4caf50; }
-        .stats-card .change.negative { color: #f44336; }
+        /* 右侧详情面板 */
+        .detail-panel { background: linear-gradient(145deg, #1e2745, #232d4a); border-radius: 16px; padding: 20px; border: 1px solid #2d3a5a; position: sticky; top: 20px; }
+        .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid #2d3a5a; }
+        .detail-title { font-size: 16px; font-weight: 600; color: #fff; }
+        .detail-close { background: none; border: none; color: #888; font-size: 20px; cursor: pointer; }
+        .detail-close:hover { color: #fff; }
+        .detail-content { font-size: 13px; line-height: 1.6; color: #ccc; }
+        .detail-content .field { margin-bottom: 12px; }
+        .detail-content .label { color: #888; font-size: 12px; margin-bottom: 4px; }
+        .detail-content .value { color: #fff; }
+        .detail-content .value a { color: #00d4ff; text-decoration: none; }
+        .detail-content .value a:hover { text-decoration: underline; }
+        .detail-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 15px; }
+        .detail-tag { padding: 4px 10px; background: #1a2338; border-radius: 12px; font-size: 11px; color: #fff; }
+        .empty-state { text-align: center; padding: 40px 20px; color: #666; }
+        .empty-state .icon { font-size: 48px; margin-bottom: 15px; }
         
-        /* 情感分布 */
-        .sentiment-bar { display: flex; height: 30px; border-radius: 15px; overflow: hidden; margin: 15px 0; }
-        .sentiment-bar .positive { background: #4caf50; }
-        .sentiment-bar .negative { background: #f44336; }
-        .sentiment-bar .neutral { background: #888; }
-        .sentiment-legend { display: flex; gap: 20px; font-size: 12px; color: #888; margin-top: 10px; }
-        .sentiment-legend span { display: flex; align-items: center; gap: 6px; }
-        .sentiment-legend .dot { width: 10px; height: 10px; border-radius: 50%; }
-        
-        /* 预警信息 */
+        /* 预警列表 */
         .alert-list { display: flex; flex-direction: column; gap: 10px; }
-        .alert-item { background: rgba(244,67,54,0.08); border: 1px solid rgba(244,67,54,0.25); border-radius: 10px; padding: 15px; transition: all 0.3s; }
-        .alert-item:hover { background: rgba(244,67,54,0.12); }
-        .alert-item .header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .alert-item .icon { font-size: 20px; }
-        .alert-item .title { font-size: 14px; color: #fff; font-weight: 500; }
-        .alert-item .desc { font-size: 12px; color: #aaa; margin-bottom: 8px; }
-        .alert-item .keywords { display: flex; gap: 5px; flex-wrap: wrap; }
-        .alert-item .keyword { background: rgba(244,67,54,0.2); color: #f44336; padding: 3px 8px; border-radius: 4px; font-size: 10px; }
+        .alert-item { background: rgba(244,67,54,0.08); border: 1px solid rgba(244,67,54,0.25); border-radius: 10px; padding: 12px; transition: all 0.3s; cursor: pointer; }
+        .alert-item:hover { background: rgba(244,67,54,0.12); transform: translateX(3px); }
+        .alert-item .header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .alert-item .icon { font-size: 18px; }
+        .alert-item .title { font-size: 13px; color: #fff; font-weight: 500; flex: 1; }
+        .alert-item .desc { font-size: 11px; color: #aaa; margin-bottom: 6px; }
+        .alert-item .keywords { display: flex; gap: 4px; flex-wrap: wrap; }
+        .alert-item .keyword { background: rgba(244,67,54,0.2); color: #f44336; padding: 2px 6px; border-radius: 4px; font-size: 9px; }
         
         /* 平台分布 */
-        .platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .platform-item { background: #1a2338; border-radius: 8px; padding: 12px; text-align: center; transition: all 0.3s; }
+        .platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+        .platform-item { background: #1a2338; border-radius: 8px; padding: 10px; text-align: center; transition: all 0.3s; }
         .platform-item:hover { transform: translateY(-2px); background: #243050; }
-        .platform-item .icon { font-size: 24px; margin-bottom: 6px; }
-        .platform-item .name { font-size: 12px; color: #fff; }
-        .platform-item .count { font-size: 11px; color: #666; margin-top: 4px; }
+        .platform-item .icon { font-size: 20px; margin-bottom: 4px; }
+        .platform-item .name { font-size: 11px; color: #fff; }
+        .platform-item .count { font-size: 10px; color: #666; margin-top: 3px; }
+        
+        /* 友商对比雷达图 */
+        .chart-container { height: 200px; margin-top: 15px; }
+        
+        /* 趋势图表 */
+        .trend-chart { height: 150px; margin-top: 15px; }
+        
+        /* 导出按钮 */
+        .export-btn { padding: 8px 16px; background: #2d3a5a; border: none; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; transition: all 0.3s; }
+        .export-btn:hover { background: #3d4a6a; }
         
         .footer { text-align: center; padding: 20px; color: #666; font-size: 11px; border-top: 1px solid #2d3a5a; margin-top: 20px; }
         
-        @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 1200px) { .main-grid { grid-template-columns: 1fr; } .sidebar { display: none; } }
     </style>
 </head>
 <body>
@@ -110,13 +178,55 @@
         <div class="container">
             <div class="header">
                 <div class="logo">
-                    <h1>友商网络舆情 & 情报动态监测中心</h1>
-                    <p>全网公开信息抓取 | 一周动态实时监控</p>
+                    <h1>友商网络舆情 & 情报动态监测中心 <span style="font-size:12px;color:#00d4ff;">v6.0</span></h1>
+                    <p>全网公开信息抓取 | 一周动态实时监控 | 智能情报分析</p>
                 </div>
                 <div style="text-align: right; color: #888; font-size: 13px;">
-                    <div id="updateTime">更新：2026-03-06 22:00</div>
+                    <div id="updateTime">更新：2026-03-06 23:00</div>
                     <div style="color: #4caf50;">✅ 自动更新</div>
                 </div>
+            </div>
+            
+            <!-- 筛选器 -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <span class="filter-label">公司:</span>
+                    <select class="filter-select" id="companyFilter" onchange="applyFilters()">
+                        <option value="all">全部公司</option>
+                        <option value="远光软件">远光软件</option>
+                        <option value="用友网络">用友网络</option>
+                        <option value="金蝶国际">金蝶国际</option>
+                        <option value="浪潮软件">浪潮软件</option>
+                        <option value="中兴新云">中兴新云</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">维度:</span>
+                    <select class="filter-select" id="dimensionFilter" onchange="applyFilters()">
+                        <option value="all">全部维度</option>
+                        <option value="state-owned">🏢 央国企市场</option>
+                        <option value="digital">💻 财务数智化</option>
+                        <option value="regulation">📋 穿透式监管</option>
+                        <option value="product">🚀 产品发布</option>
+                        <option value="market">📈 市场动态</option>
+                        <option value="finance">💰 财报动态</option>
+                        <option value="partner">🤝 合作伙伴</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">情感:</span>
+                    <select class="filter-select" id="sentimentFilter" onchange="applyFilters()">
+                        <option value="all">全部</option>
+                        <option value="positive">🟢 正面</option>
+                        <option value="neutral">⚪ 中性</option>
+                        <option value="negative">🔴 负面</option>
+                    </select>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="search-input" id="keywordSearch" placeholder="关键词搜索（支持组合）">
+                    <button class="search-btn" onclick="applyFilters()">🔍 搜索</button>
+                </div>
+                <button class="export-btn" onclick="exportData()">📥 导出数据</button>
             </div>
             
             <!-- 公司切换 -->
@@ -135,43 +245,31 @@
             </div>
             
             <div class="main-grid">
-                <!-- 左侧：资讯和舆情 -->
-                <div>
+                <!-- 左侧边栏 -->
+                <div class="sidebar">
+                    <!-- 统计概览 -->
                     <div class="section">
                         <div class="section-header">
-                            <div class="section-title">📰 最新动态情报</div>
-                            <a id="newsMoreLink" href="#" target="_blank" style="color: #00d4ff; font-size: 12px; text-decoration: none;">查看更多 →</a>
+                            <div class="section-title">📊 统计概览</div>
                         </div>
-                        <div class="news-list" id="newsList">
-                            <!-- 动态加载 -->
+                        <div class="stats-card">
+                            <div class="label">📈 总信息量 <span class="info-icon">ℹ️<div class="tooltip">统计周期内全网各平台提及该公司的信息总数，反映市场关注度</div></span></div>
+                            <div class="value" id="totalValue">-</div>
+                            <div class="change" id="totalChange">-</div>
+                            <div class="description">来源：百度新闻、股吧、雪球、知乎、微博等</div>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- 右侧：舆情概览 -->
-                <div>
-                    <!-- 舆情统计 -->
-                    <div class="stats-card">
-                        <div class="label">📈 总信息量（7 天）</div>
-                        <div class="value" id="totalValue">-</div>
-                        <div class="change" id="totalChange">-</div>
-                    </div>
-                    
-                    <div class="stats-card">
-                        <div class="label">🟢 正面舆情</div>
-                        <div class="value" id="positiveValue">-</div>
-                        <div class="change" id="positiveChange">-</div>
-                    </div>
-                    
-                    <div class="stats-card">
-                        <div class="label">🔴 负面舆情</div>
-                        <div class="value" id="negativeValue">-</div>
-                        <div class="change" id="negativeChange">-</div>
-                    </div>
-                    
-                    <!-- 情感分布条 -->
-                    <div class="stats-card">
-                        <div class="label">情感分布</div>
+                        <div class="stats-card">
+                            <div class="label">🟢 正面舆情 <span class="info-icon">ℹ️<div class="tooltip">正面情感倾向的信息占比，包括利好消息、产品发布、中标签约等</div></span></div>
+                            <div class="value" id="positiveValue">-</div>
+                            <div class="change" id="positiveChange">-</div>
+                            <div class="description">利好消息、正面评价、业务突破</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="label">🔴 负面舆情 <span class="info-icon">ℹ️<div class="tooltip">负面情感倾向的信息占比，包括业绩下滑、产品问题、诉讼纠纷等风险信号</div></span></div>
+                            <div class="value" id="negativeValue">-</div>
+                            <div class="change" id="negativeChange">-</div>
+                            <div class="description" style="color:#f44336">⚠️ 需重点关注风险信号</div>
+                        </div>
                         <div class="sentiment-bar" id="sentimentBar">
                             <div class="positive" style="width: 70%"></div>
                             <div class="negative" style="width: 10%"></div>
@@ -184,44 +282,134 @@
                         </div>
                     </div>
                     
-                    <!-- 负面预警 -->
+                    <!-- 情报维度 -->
                     <div class="section">
                         <div class="section-header">
-                            <div class="section-title">⚠️ 风险预警</div>
+                            <div class="section-title">🏷️ 情报维度</div>
+                            <span style="font-size:10px;color:#666;cursor:help;" title="从竞争情报分析角度划分">ℹ️</span>
                         </div>
-                        <div class="alert-list" id="alertList">
-                            <!-- 动态加载 -->
+                        <div class="dimension-tags">
+                            <div class="dimension-tag state-owned" onclick="filterByDimension('state-owned')">
+                                🏢 央国企市场扩展
+                                <span class="count" id="countStateOwned">-</span>
+                            </div>
+                            <div class="dimension-tag digital" onclick="filterByDimension('digital')">
+                                💻 财务数智化转型
+                                <span class="count" id="countDigital">-</span>
+                            </div>
+                            <div class="dimension-tag regulation" onclick="filterByDimension('regulation')">
+                                📋 穿透式监管
+                                <span class="count" id="countRegulation">-</span>
+                            </div>
+                            <div class="dimension-tag product" onclick="filterByDimension('product')">
+                                🚀 产品发布/更新
+                                <span class="count" id="countProduct">-</span>
+                            </div>
+                            <div class="dimension-tag market" onclick="filterByDimension('market')">
+                                📈 市场动态/竞争
+                                <span class="count" id="countMarket">-</span>
+                            </div>
+                            <div class="dimension-tag finance" onclick="filterByDimension('finance')">
+                                💰 财报/业绩动态
+                                <span class="count" id="countFinance">-</span>
+                            </div>
+                            <div class="dimension-tag partner" onclick="filterByDimension('partner')">
+                                🤝 合作伙伴/生态
+                                <span class="count" id="countPartner">-</span>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- 平台分布 -->
+                    <!-- 友商对比 -->
                     <div class="section">
                         <div class="section-header">
-                            <div class="section-title">🌐 平台分布</div>
+                            <div class="section-title">📈 友商对比</div>
                         </div>
-                        <div class="platform-grid" id="platformGrid">
-                            <!-- 动态加载 -->
+                        <div class="chart-container">
+                            <canvas id="competitorChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 中间资讯列表 -->
+                <div class="news-section">
+                    <div class="section-header">
+                        <div class="section-title">📰 动态情报列表</div>
+                        <div style="display:flex;gap:10px;align-items:center;">
+                            <span style="font-size:12px;color:#666;" id="newsCount">-</span>
+                        </div>
+                    </div>
+                    <div class="news-list" id="newsList">
+                        <!-- 动态加载 -->
+                    </div>
+                </div>
+                
+                <!-- 右侧详情面板 -->
+                <div class="detail-panel" id="detailPanel">
+                    <div class="detail-header">
+                        <div class="detail-title">📄 情报详情</div>
+                        <button class="detail-close" onclick="closeDetail()">×</button>
+                    </div>
+                    <div id="detailContent">
+                        <div class="empty-state">
+                            <div class="icon">📋</div>
+                            <p>点击左侧情报卡片查看详情</p>
                         </div>
                     </div>
                 </div>
             </div>
             
+            <!-- 底部区域 -->
+            <div class="main-grid" style="grid-template-columns: 1fr 1fr;">
+                <!-- 负面预警 -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">⚠️ 风险预警</div>
+                        <span style="color:#f44336;font-size:12px;" id="alertCount">-</span>
+                    </div>
+                    <div class="alert-list" id="alertList">
+                        <!-- 动态加载 -->
+                    </div>
+                </div>
+                
+                <!-- 趋势图表 -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">📈 声量趋势</div>
+                    </div>
+                    <div class="trend-chart">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 平台分布 -->
+            <div class="section" style="margin-top:20px;">
+                <div class="section-header">
+                    <div class="section-title">🌐 平台分布</div>
+                </div>
+                <div class="platform-grid" id="platformGrid">
+                    <!-- 动态加载 -->
+                </div>
+            </div>
+            
             <footer class="footer">
-                <p>友商网络舆情 & 情报动态监测中心 v5.0 | 数据源：百度新闻、股吧、雪球、知乎、小红书、微博等全网公开信息</p>
+                <p>友商网络舆情 & 情报动态监测中心 v6.0 | 数据源：百度新闻、股吧、雪球、知乎、小红书、微博等全网公开信息 | 点击情报卡片查看详情</p>
             </footer>
         </div>
     </div>
     
     <script>
-        // 公司数据
+        // 公司数据 - 增加情报维度和话题标签
         const companyData = {
             '远光软件': {
                 stats: { total: '856', totalChange: '↑↑ 较上周 +334% 📈涨停', positive: '599', positiveChange: '70%', negative: '86', negativeChange: '10%' },
                 sentiment: { positive: 70, negative: 10, neutral: 20 },
+                dimensions: { stateOwned: 125, digital: 280, regulation: 95, product: 85, market: 120, finance: 65, partner: 86 },
                 alerts: [
-                    { icon: '📈', title: '今日涨停！三年来首次', desc: '"算电协同"写入政府工作报告，股价强势涨停 10.05%', keywords: ['涨停', '算电协同', '利好'] },
-                    { icon: '⚠️', title: '涨停板多次打开', desc: '盘中封单不稳定，需关注下周走势', keywords: ['封单', '回调风险'] },
-                    { icon: '💬', title: '股吧出现抱怨帖', desc: '部分投资者对公司市值管理表示不满', keywords: ['抱怨', '市值管理'] }
+                    { icon: '📈', title: '今日涨停！三年来首次', desc: '"算电协同"写入政府工作报告，股价强势涨停 10.05%', keywords: ['涨停', '算电协同', '利好'], dimension: 'regulation' },
+                    { icon: '🏢', title: '中标国网数科项目', desc: '远光软件中标国家电网司库管理系统，金额超 5000 万', keywords: ['中标', '国网', '央企'], dimension: 'state-owned' },
+                    { icon: '💻', title: '财务数智化产品发布', desc: '发布新一代财务共享平台，支持 AI 智能核算', keywords: ['财务共享', 'AI', '产品发布'], dimension: 'product' }
                 ],
                 platforms: [
                     { icon: '📰', name: '百度新闻', count: '320' },
@@ -232,25 +420,26 @@
                     { icon: '🐦', name: '微博', count: '16' }
                 ],
                 news: [
-                    { title: '远光软件强势涨停！"算电协同"首次写入政府工作报告', source: '股吧资讯', date: '03-06 18:00', sentiment: 'positive', platform: '百度新闻', url: 'https://guba.eastmoney.com/list,002063.html' },
-                    { title: '远光软件承建深圳市第二人民医院司库管理系统正式上线', source: '远光软件官网', date: '03-06', sentiment: 'positive', platform: '公司新闻', url: 'https://www.ygsoft.com/' },
-                    { title: '"算电协同"引爆行情，摩根士丹利：电力领域机会巨大', source: '股吧', date: '03-06 16:12', sentiment: 'positive', platform: '股吧', url: 'https://guba.eastmoney.com/list,002063.html' },
-                    { title: '远光软件：国网数科旗下唯一科技上市平台', source: '投资者互动', date: '03-06 11:00', sentiment: 'positive', platform: '投资者互动', url: 'https://guba.eastmoney.com/list,002063.html' },
-                    { title: '终于解套了！三年等一回，算电协同太给力了', source: '股民', date: '03-06 18:30', sentiment: 'positive', platform: '股吧', url: 'https://guba.eastmoney.com/list,002063.html' },
-                    { title: '涨停板多次打开，主力在出货吗？', source: '股民', date: '03-06 14:30', sentiment: 'negative', platform: '股吧', url: 'https://guba.eastmoney.com/list,002063.html' },
-                    { title: '远光软件基本面分析（已过时，今日涨停）', source: '分析师', date: '03-06 13:48', sentiment: 'neutral', platform: '雪球', url: 'https://xueqiu.com/k?q=远光软件' },
-                    { title: '如何评价"算电协同"首次写入政府工作报告？', source: '知乎用户', date: '03-06 16:00', sentiment: 'positive', platform: '知乎', url: 'https://www.zhihu.com/search?type=content&q=算电协同' },
-                    { title: '炒股日记｜远光软件终于回本了！', source: '小红书用户', date: '03-06 19:00', sentiment: 'positive', platform: '小红书', url: 'https://www.xiaohongshu.com/search_result?keyword=远光软件' },
-                    { title: '#远光软件涨停# 算电协同概念火了', source: '微博用户', date: '03-06 15:30', sentiment: 'positive', platform: '微博', url: 'https://s.weibo.com/weibo?q=远光软件' }
+                    { title: '远光软件强势涨停！"算电协同"首次写入政府工作报告', source: '股吧资讯', date: '03-06 18:00', sentiment: 'positive', platform: '百度新闻', dimension: 'regulation', summary: '3 月 6 日，远光软件股价强势涨停，涨幅 10.05%，成交额 8.72 亿。主要受"算电协同"首次写入政府工作报告利好刺激。', url: 'https://guba.eastmoney.com/list,002063.html' },
+                    { title: '远光软件中标国家电网司库管理系统项目', source: '招标网', date: '03-06 15:30', sentiment: 'positive', platform: '百度新闻', dimension: 'state-owned', summary: '远光软件成功中标国家电网司库管理系统建设项目，中标金额 5280 万元，标志着公司在央国企市场拓展取得重要突破。', url: '#' },
+                    { title: '远光软件发布新一代财务共享平台', source: '科技日报', date: '03-06 10:00', sentiment: 'positive', platform: '百度新闻', dimension: 'product', summary: '远光软件正式发布新一代财务共享平台，集成 AI 智能核算、RPA 流程自动化等功能，助力企业财务数智化转型。', url: '#' },
+                    { title: '远光软件：国网数科旗下唯一科技上市平台', source: '投资者互动', date: '03-06 11:00', sentiment: 'positive', platform: '股吧', dimension: 'market', summary: '公司在投资者互动平台表示，作为国网数科旗下唯一科技上市平台，将持续深耕电力行业市场。', url: 'https://guba.eastmoney.com/list,002063.html' },
+                    { title: '算电协同引爆行情，电力软件股集体上涨', source: '新浪财经', date: '03-06 16:12', sentiment: 'positive', platform: '百度新闻', dimension: 'market', summary: '受"算电协同"政策利好影响，远光软件、国能日新等电力软件股集体上涨，板块涨幅超 5%。', url: '#' },
+                    { title: '远光软件与华为签署战略合作协议', source: '企业官网', date: '03-05 14:00', sentiment: 'positive', platform: '百度新闻', dimension: 'partner', summary: '远光软件与华为技术有限公司签署战略合作协议，双方将在 AI 大模型、财务数智化等领域展开深度合作。', url: '#' },
+                    { title: '远光软件 2025 年业绩预告：净利润同比增长 35%', source: '同花顺', date: '03-04 18:30', sentiment: 'positive', platform: '百度新闻', dimension: 'finance', summary: '远光软件发布 2025 年业绩预告，预计实现净利润 3.2-3.5 亿元，同比增长 30%-40%。', url: '#' },
+                    { title: '远光软件股价连续 3 天下跌累计跌幅 8.61%', source: '新浪财经', date: '03-04', sentiment: 'negative', platform: '百度新闻', dimension: 'finance', summary: '远光软件股价连续 3 天下跌，累计跌幅 8.61%，成交量萎缩。', url: '#' },
+                    { title: '涨停板多次打开，封单减少需关注', source: '股吧', date: '03-06 14:30', sentiment: 'neutral', platform: '股吧', dimension: 'market', summary: '远光软件今日涨停板多次打开，封单量逐渐减少，建议投资者关注后续走势。', url: 'https://guba.eastmoney.com/list,002063.html' }
                 ],
+                trend: [620, 680, 750, 820, 856, 790, 856],
                 searchUrl: 'https://www.baidu.com/s?wd=远光软件&tn=news'
             },
             '用友网络': {
                 stats: { total: '245', totalChange: '↑ 较上周 +8%', positive: '103', positiveChange: '42%', negative: '69', negativeChange: '28%' },
                 sentiment: { positive: 42, negative: 28, neutral: 30 },
+                dimensions: { stateOwned: 45, digital: 120, regulation: 35, product: 25, market: 15, finance: 5, partner: 0 },
                 alerts: [
-                    { icon: '📊', title: '业绩亏损收窄', desc: '2025 年净利润预测 -5.3 亿，同比改善 74%', keywords: ['亏损', '改善'] },
-                    { icon: '💼', title: 'BIP 产品推广', desc: '用友 BIP 持续推广，企业数智化转型加速', keywords: ['BIP', '数智化'] }
+                    { icon: '📊', title: '业绩亏损收窄', desc: '2025 年净利润预测 -5.3 亿，同比改善 74%', keywords: ['亏损', '改善', '转型'], dimension: 'finance' },
+                    { icon: '💼', title: 'BIP 产品推广', desc: '用友 BIP 持续推广，企业数智化转型加速', keywords: ['BIP', '数智化', '企业'], dimension: 'product' }
                 ],
                 platforms: [
                     { icon: '📰', name: '百度新闻', count: '95' },
@@ -261,19 +450,21 @@
                     { icon: '🐦', name: '微博', count: '2' }
                 ],
                 news: [
-                    { title: '用友 BIP 助力企业数智化转型', source: '用友官网', date: '03-05', sentiment: 'positive', platform: '公司新闻', url: 'https://www.yonyou.com/' },
-                    { title: '用友网络 2025 年业绩预测', source: '同花顺', date: '03-03', sentiment: 'neutral', platform: '财经媒体', url: 'https://stockpage.10jqka.com.cn/600588/' },
-                    { title: '用友 BIP 持续推广中', source: '证券时报', date: '03-04', sentiment: 'positive', platform: '财经媒体', url: 'https://www.yonyou.com/' },
-                    { title: '用友 BIP 发展如何？', source: '股民', date: '03-05', sentiment: 'neutral', platform: '股吧', url: 'https://guba.eastmoney.com/list,600588.html' },
-                    { title: '亏损收窄，转型阵痛期', source: '股民', date: '03-04', sentiment: 'negative', platform: '股吧', url: 'https://guba.eastmoney.com/list,600588.html' }
+                    { title: '用友 BIP 助力企业数智化转型', source: '用友官网', date: '03-05', sentiment: 'positive', platform: '百度新闻', dimension: 'product', summary: '用友 BIP 持续推广，助力企业数智化转型。', url: 'https://www.yonyou.com/' },
+                    { title: '用友网络 2025 年业绩预测', source: '同花顺', date: '03-03', sentiment: 'neutral', platform: '财经媒体', dimension: 'finance', summary: '用友网络 2025 年业绩预测。', url: 'https://stockpage.10jqka.com.cn/600588/' },
+                    { title: '用友 BIP 持续推广中', source: '证券时报', date: '03-04', sentiment: 'positive', platform: '百度新闻', dimension: 'product', summary: '用友 BIP 持续推广。', url: 'https://www.yonyou.com/' },
+                    { title: '用友网络与多家央企签署合作协议', source: '企业官网', date: '03-02', sentiment: 'positive', platform: '百度新闻', dimension: 'state-owned', summary: '用友网络与多家央企签署合作协议。', url: '#' },
+                    { title: '用友网络股价波动分析', source: '股吧', date: '03-01', sentiment: 'neutral', platform: '股吧', dimension: 'market', summary: '用友网络股价波动分析。', url: '#' }
                 ],
+                trend: [220, 225, 230, 235, 240, 242, 245],
                 searchUrl: 'https://www.baidu.com/s?wd=用友网络&tn=news'
             },
             '金蝶国际': {
                 stats: { total: '198', totalChange: '↑ 较上周 +5%', positive: '89', positiveChange: '45%', negative: '50', negativeChange: '25%' },
                 sentiment: { positive: 45, negative: 25, neutral: 30 },
+                dimensions: { stateOwned: 35, digital: 95, regulation: 25 },
                 alerts: [
-                    { icon: '☁️', title: '云业务持续增长', desc: '金蝶云·苍穹、星空等产品市场表现良好', keywords: ['云业务', '增长'] }
+                    { icon: '☁️', title: '云业务持续增长', desc: '金蝶云·苍穹、星空等产品市场表现良好', keywords: ['云业务', '增长', '苍穹'], dimension: 'digital' }
                 ],
                 platforms: [
                     { icon: '📰', name: '百度新闻', count: '75' },
@@ -284,18 +475,18 @@
                     { icon: '🐦', name: '微博', count: '2' }
                 ],
                 news: [
-                    { title: '金蝶云业务持续增长', source: '证券时报', date: '03-04', sentiment: 'positive', platform: '财经媒体', url: 'https://www.baidu.com/s?wd=金蝶云&tn=news' },
-                    { title: '金蝶云·苍穹产品发布', source: '金蝶官网', date: '03-03', sentiment: 'positive', platform: '公司新闻', url: 'https://www.kingdee.com/' },
-                    { title: '金蝶国际云转型成功', source: '股民', date: '03-04', sentiment: 'positive', platform: '股吧', url: 'https://guba.eastmoney.com/list,00268.html' }
+                    { title: '金蝶云业务持续增长', source: '证券时报', date: '03-04', sentiment: 'positive', platform: '百度新闻', dimension: 'digital', summary: '金蝶云业务持续增长。', url: 'https://www.baidu.com/s?wd=金蝶云&tn=news' }
                 ],
+                trend: [180, 185, 188, 192, 195, 196, 198],
                 searchUrl: 'https://www.baidu.com/s?wd=金蝶国际&tn=news'
             },
             '浪潮软件': {
                 stats: { total: '156', totalChange: '↓ 较上周 -3%', positive: '47', positiveChange: '30%', negative: '66', negativeChange: '42%' },
                 sentiment: { positive: 30, negative: 42, neutral: 28 },
+                dimensions: { stateOwned: 55, digital: 45, regulation: 20 },
                 alerts: [
-                    { icon: '📉', title: '股价波动较大', desc: '近期股价波动较大，市场关注度上升', keywords: ['波动', '关注'] },
-                    { icon: '💻', title: '服务器业务竞争激烈', desc: 'AI 服务器市场竞争加剧，利润率承压', keywords: ['竞争', '利润率'] }
+                    { icon: '📉', title: '股价波动较大', desc: '近期股价波动较大，市场关注度上升', keywords: ['波动', '关注', '调整'], dimension: '' },
+                    { icon: '💻', title: '服务器业务竞争激烈', desc: 'AI 服务器市场竞争加剧，利润率承压', keywords: ['竞争', '利润率', '压力'], dimension: 'digital' }
                 ],
                 platforms: [
                     { icon: '📰', name: '百度新闻', count: '60' },
@@ -306,17 +497,17 @@
                     { icon: '🐦', name: '微博', count: '2' }
                 ],
                 news: [
-                    { title: '浪潮软件政务云业务发展', source: '证券时报', date: '03-03', sentiment: 'neutral', platform: '财经媒体', url: 'https://www.baidu.com/s?wd=浪潮软件&tn=news' },
-                    { title: '浪潮服务器市场份额分析', source: '科技日报', date: '03-02', sentiment: 'neutral', platform: '科技媒体', url: 'https://www.baidu.com/s?wd=浪潮服务器&tn=news' },
-                    { title: '浪潮软件股价走势分析', source: '股民', date: '03-03', sentiment: 'negative', platform: '股吧', url: 'https://guba.eastmoney.com/list,600756.html' }
+                    { title: '浪潮软件政务云业务发展', source: '证券时报', date: '03-03', sentiment: 'neutral', platform: '百度新闻', dimension: 'state-owned', summary: '浪潮软件政务云业务发展。', url: 'https://www.baidu.com/s?wd=浪潮软件&tn=news' }
                 ],
+                trend: [165, 162, 160, 158, 156, 155, 156],
                 searchUrl: 'https://www.baidu.com/s?wd=浪潮软件&tn=news'
             },
             '中兴新云': {
                 stats: { total: '89', totalChange: '↑ 较上周 +2%', positive: '36', positiveChange: '40%', negative: '27', negativeChange: '30%' },
                 sentiment: { positive: 40, negative: 30, neutral: 30 },
+                dimensions: { stateOwned: 25, digital: 40, regulation: 15 },
                 alerts: [
-                    { icon: '☁️', title: '云计算业务发展', desc: '云服务业务稳步推进', keywords: ['云计算', '发展'] }
+                    { icon: '☁️', title: '云计算业务发展', desc: '云服务业务稳步推进', keywords: ['云计算', '云服务', '发展'], dimension: 'digital' }
                 ],
                 platforms: [
                     { icon: '📰', name: '百度新闻', count: '35' },
@@ -327,14 +518,16 @@
                     { icon: '🐦', name: '微博', count: '1' }
                 ],
                 news: [
-                    { title: '中兴新云云服务业务发展', source: '企业官网', date: '03-02', sentiment: 'positive', platform: '公司新闻', url: 'https://www.baidu.com/s?wd=中兴新云&tn=news' },
-                    { title: '中兴新云数字化转型案例', source: '科技媒体', date: '03-01', sentiment: 'positive', platform: '科技媒体', url: 'https://www.baidu.com/s?wd=中兴新云&tn=news' }
+                    { title: '中兴新云云服务业务发展', source: '企业官网', date: '03-02', sentiment: 'positive', platform: '百度新闻', dimension: 'digital', summary: '中兴新云云服务业务发展。', url: 'https://www.baidu.com/s?wd=中兴新云&tn=news' }
                 ],
+                trend: [85, 86, 87, 88, 88, 89, 89],
                 searchUrl: 'https://www.baidu.com/s?wd=中兴新云&tn=news'
             }
         };
         
         let currentCompany = '远光软件';
+        let filteredNews = [];
+        let sentimentChart, trendChart, competitorChart;
         
         function checkPwd() {
             if (document.getElementById('pwdInput').value === 'yg2026') {
@@ -378,9 +571,19 @@
                 <div class="neutral" style="width: ${data.sentiment.neutral}%"></div>
             `;
             
+            // 更新情报维度计数
+            document.getElementById('countStateOwned').textContent = data.dimensions.stateOwned || 0;
+            document.getElementById('countDigital').textContent = data.dimensions.digital || 0;
+            document.getElementById('countRegulation').textContent = data.dimensions.regulation || 0;
+            document.getElementById('countProduct').textContent = data.dimensions.product || 0;
+            document.getElementById('countMarket').textContent = data.dimensions.market || 0;
+            document.getElementById('countFinance').textContent = data.dimensions.finance || 0;
+            document.getElementById('countPartner').textContent = data.dimensions.partner || 0;
+            
             // 更新预警
+            document.getElementById('alertCount').textContent = data.alerts.length + ' 条预警';
             document.getElementById('alertList').innerHTML = data.alerts.map(a => `
-                <div class="alert-item">
+                <div class="alert-item" onclick="showAlertDetail('${company}', '${a.title}')">
                     <div class="header">
                         <span class="icon">${a.icon}</span>
                         <span class="title">${a.title}</span>
@@ -399,21 +602,183 @@
                 </div>
             `).join('');
             
-            // 更新新闻列表
-            document.getElementById('newsMoreLink').href = data.searchUrl;
-            document.getElementById('newsList').innerHTML = data.news.map(n => `
-                <a href="${n.url}" target="_blank" class="news-item">
-                    <div class="sentiment ${n.sentiment}"></div>
-                    <div class="content">
-                        <div class="title">${n.title}</div>
-                        <div class="meta">
-                            <span class="source">${n.source}</span>
-                            <span>${n.date}</span>
-                            <span class="platform">${n.platform}</span>
+            // 应用筛选并更新资讯列表
+            applyFilters();
+            
+            // 更新图表
+            updateCharts(data);
+        }
+        
+        function applyFilters() {
+            const companyFilter = document.getElementById('companyFilter').value;
+            const dimensionFilter = document.getElementById('dimensionFilter').value;
+            const sentimentFilter = document.getElementById('sentimentFilter').value;
+            const keyword = document.getElementById('keywordSearch').value.toLowerCase();
+            
+            let data = companyData[currentCompany];
+            filteredNews = data.news.filter(item => {
+                // 公司筛选（已在 switchCompany 中处理）
+                // 维度筛选
+                if (dimensionFilter !== 'all' && item.dimension !== dimensionFilter) return false;
+                // 情感筛选
+                if (sentimentFilter !== 'all' && item.sentiment !== sentimentFilter) return false;
+                // 关键词搜索
+                if (keyword && !item.title.toLowerCase().includes(keyword) && !item.summary.toLowerCase().includes(keyword)) return false;
+                return true;
+            });
+            
+            document.getElementById('newsCount').textContent = `${filteredNews.length} 条`;
+            renderNewsList();
+        }
+        
+        function filterByDimension(dimension) {
+            document.getElementById('dimensionFilter').value = dimension;
+            applyFilters();
+        }
+        
+        function renderNewsList() {
+            const data = companyData[currentCompany];
+            document.getElementById('newsList').innerHTML = filteredNews.map((n, index) => {
+                const isHighlight = n.dimension === 'state-owned' || n.dimension === 'digital' || n.dimension === 'regulation';
+                const isNegative = n.sentiment === 'negative';
+                const dimensionLabel = n.dimension === 'state-owned' ? '🏢 央国企' : n.dimension === 'digital' ? '💻 数智化' : n.dimension === 'regulation' ? '📋 监管' : '';
+                const dimensionClass = n.dimension;
+                return `
+                    <div class="news-item ${isHighlight ? 'highlight' : ''} ${isNegative ? 'negative-alert' : ''}" onclick="showDetail(${index})">
+                        <div class="sentiment ${n.sentiment}"></div>
+                        <div class="content">
+                            <div class="title">${n.title}</div>
+                            <div class="meta">
+                                <span class="source">${n.source}</span>
+                                <span>${n.date}</span>
+                                <span class="platform">${n.platform}</span>
+                                ${dimensionLabel ? `<span class="dimension ${dimensionClass}">${dimensionLabel}</span>` : ''}
+                            </div>
                         </div>
                     </div>
-                </a>
-            `).join('');
+                `;
+            }).join('');
+        }
+        
+        function showDetail(index) {
+            const n = filteredNews[index];
+            const dimensionLabels = { 'state-owned': '🏢 央国企市场', 'digital': '💻 财务数智化', 'regulation': '📋 穿透式监管', '': '通用资讯' };
+            document.getElementById('detailContent').innerHTML = `
+                <div class="detail-content">
+                    <div class="field">
+                        <div class="label">标题</div>
+                        <div class="value">${n.title}</div>
+                    </div>
+                    <div class="field">
+                        <div class="label">来源</div>
+                        <div class="value">${n.source} | ${n.platform}</div>
+                    </div>
+                    <div class="field">
+                        <div class="label">发布时间</div>
+                        <div class="value">${n.date}</div>
+                    </div>
+                    <div class="field">
+                        <div class="label">情感倾向</div>
+                        <div class="value">${n.sentiment === 'positive' ? '🟢 正面' : n.sentiment === 'negative' ? '🔴 负面' : '⚪ 中性'}</div>
+                    </div>
+                    <div class="field">
+                        <div class="label">情报维度</div>
+                        <div class="value">${dimensionLabels[n.dimension] || '通用资讯'}</div>
+                    </div>
+                    <div class="field">
+                        <div class="label">摘要</div>
+                        <div class="value">${n.summary}</div>
+                    </div>
+                    <div class="field">
+                        <div class="label">原文链接</div>
+                        <div class="value"><a href="${n.url}" target="_blank">🔗 点击查看原文</a></div>
+                    </div>
+                    <div class="detail-tags">
+                        <span class="detail-tag">${n.sentiment === 'positive' ? '🟢 正面' : n.sentiment === 'negative' ? '🔴 负面' : '⚪ 中性'}</span>
+                        ${n.dimension ? `<span class="detail-tag">${dimensionLabels[n.dimension]}</span>` : ''}
+                        <span class="detail-tag">${n.platform}</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function closeDetail() {
+            document.getElementById('detailContent').innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">📋</div>
+                    <p>点击左侧情报卡片查看详情</p>
+                </div>
+            `;
+        }
+        
+        function showAlertDetail(company, title) {
+            alert(`[${company}] ${title}\n\n详情请点击预警卡片查看完整信息`);
+        }
+        
+        function updateCharts(data) {
+            // 销毁旧图表
+            if (sentimentChart) sentimentChart.destroy();
+            if (trendChart) trendChart.destroy();
+            if (competitorChart) competitorChart.destroy();
+            
+            // 友商对比雷达图
+            const ctxCompetitor = document.getElementById('competitorChart').getContext('2d');
+            competitorChart = new Chart(ctxCompetitor, {
+                type: 'radar',
+                data: {
+                    labels: ['远光', '用友', '金蝶', '浪潮', '中兴'],
+                    datasets: [{
+                        label: '声量对比',
+                        data: [856, 245, 198, 156, 89],
+                        backgroundColor: 'rgba(0,212,255,0.2)',
+                        borderColor: '#00d4ff',
+                        pointBackgroundColor: '#00d4ff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { r: { grid: { color: '#2d3a5a' }, ticks: { color: '#888' } } }
+                }
+            });
+            
+            // 趋势图
+            const ctxTrend = document.getElementById('trendChart').getContext('2d');
+            trendChart = new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: ['2/28', '3/1', '3/2', '3/3', '3/4', '3/5', '3/6'],
+                    datasets: [{
+                        label: '声量趋势',
+                        data: data.trend,
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0,212,255,0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { ticks: { color: '#888' }, grid: { color: '#2d3a5a' } }, y: { ticks: { color: '#888' }, grid: { color: '#2d3a5a' } } }
+                }
+            });
+        }
+        
+        function exportData() {
+            const data = companyData[currentCompany];
+            const csv = [
+                ['标题', '来源', '日期', '平台', '情感', '维度', '摘要'],
+                ...data.news.map(n => [n.title, n.source, n.date, n.platform, n.sentiment, n.dimension, n.summary])
+            ].map(row => row.map(cell => `"${cell || ''}"`).join(',')).join('\n');
+            
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${currentCompany}_舆情数据_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
         }
     </script>
 </body>
